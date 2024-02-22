@@ -8,6 +8,9 @@ packages = [{include = "sorting_hat_step_batch"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
+pyspark = "^3.5.0"
+batch_processing = {path = "../batch_processing/batch_processing", develop = true}
+pymongo = "^4.6.2"
 
 
 [build-system]

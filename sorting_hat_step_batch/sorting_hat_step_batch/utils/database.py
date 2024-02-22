@@ -1,10 +1,7 @@
 import math
 from typing import Dict, Union, List
 
-from sqlalchemy.dialects.postgresql import insert
-
-from db_plugins.db.sql.models import Object
-from ..database import MongoConnection, PsqlConnection
+from ..database import MongoConnection
 import importlib.metadata
 
 version = importlib.metadata.version("sorting-hat-step")
@@ -74,43 +71,3 @@ def update_query(db: MongoConnection, records: List[dict]):
         db.database["object"].find_one_and_update(
             query, new_value, upsert=True, return_document=True
         )
-
-
-def insert_empty_objects_to_sql(db: PsqlConnection, records: List[Dict]):
-    # insert into db values = records on conflict do nothing
-    def format_extra_fields(record):
-        extra_fields = record["extra_fields"]
-        return {
-            "ndethist": extra_fields["ndethist"],
-            "ncovhist": extra_fields["ncovhist"],
-            "mjdstarthist": extra_fields["jdstarthist"] - 2400000.5,
-            "mjdendhist": extra_fields["jdendhist"] - 2400000.5,
-            "meanra": record["ra"],
-            "meandec": record["dec"],
-            "firstmjd": record["mjd"],
-            "lastmjd": record["mjd"],
-            "deltajd": 0,
-            "step_id_corr": version,
-        }
-
-    oids = {
-        r["_id"]: format_extra_fields(r)
-        for r in records
-        if r["sid"].lower() == "ztf"
-    }
-    with db.session() as session:
-        to_insert = [
-            {"oid": oid, **extra_fields} for oid, extra_fields in oids.items()
-        ]
-        statement = insert(Object).values(to_insert)
-        statement = statement.on_conflict_do_update(
-            "object_pkey",
-            set_=dict(
-                ndethist=statement.excluded.ndethist,
-                ncovhist=statement.excluded.ncovhist,
-                mjdstarthist=statement.excluded.mjdstarthist,
-                mjdendhist=statement.excluded.mjdendhist,
-            ),
-        )
-        session.execute(statement)
-        session.commit()

@@ -22,4 +22,4 @@ def parse_output(alert: pd.Series) -> dict:
     alert_dict["extra_fields"] = _parse_extra_fields(
         alert_dict["extra_fields"]
     )
-    return alert_dict56
+    return alert_dict

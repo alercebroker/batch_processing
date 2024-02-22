@@ -2,7 +2,8 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf
 from pyspark.sql.types import StringType
 
-from batch_processing import ParquetReader
+from batch_processing.parquet_reader import ParquetReader
+from database import MongoConnection
 from utils.wizard import id_generator
 from utils.database import oid_query, conesearch_query
 
@@ -22,11 +23,14 @@ class SortingHatBatch():
         )
         
         # Initialize ParquetReader
-        config_path = "/home/edipizarro/alerce/batch_processing/configs/read.config.json"
+        config_path = "/home/alex/Projects/Alerce/batch_processing/sorting_hat_step_batch/read.config.json"
         parquet_reader = ParquetReader(config_path)
         parquet_reader.register_spark_session(spark)
 
-        mongo_connection = None
+        mongo_config = {
+            
+        }
+        self.mongo_connection = MongoConnection(mongo_config)
 
         # Start df_generator
         self.df_generator = parquet_reader.get_df_generator()

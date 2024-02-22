@@ -1,0 +1,7 @@
+{
+    "files_base_folder": "/home/alex/Projects/data",
+    "parquet_folder": "raw_parquet",
+    "start_date": "2023/12/26",
+    "end_date": "2023/12/27",
+    "date_format": "%Y/%m/%d"
+}

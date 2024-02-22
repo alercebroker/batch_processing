@@ -135,7 +135,7 @@ def find_existing_id(db: MongoConnection, alerts: pd.DataFrame):
     return alertscopy
 
 
-def find_id_by_conesearch(db: MongoConnection, alerts: pd.DataFrame):
+def find_id_by_conesearch(db: MongoConnection, ra, dect,):
     """Assigns aid based on a conesearch in the database.
 
     Input:
